@@ -1,0 +1,51 @@
+<launch>
+	<arg name="jackal_speed" default="1.2"/>
+
+    <include file="$(find jackal_gazebo)/launch/empty_world.launch">
+        <arg name="gui" value="false" />
+        <arg name="headless" value="true" />
+    </include>
+
+    <include file="$(find pedsim_simulator)/launch/huw_test.launch"/>
+
+
+    <!-- Launch neural net ros wrapper (removed ns)-->
+    <node pkg="cadrl_ros" type="cadrl_node.py" name="cadrl_node" output="screen">
+        
+        <!-- Publications -->
+        <remap from="~other_vels" to="other_vels"/>
+        <remap from="~nn_cmd_vel" to="cmd_vel"/>
+        <remap from="~pose_marker" to="pose_marker"/>
+        <remap from="~path_marker" to="path_marker"/>
+        <remap from="~goal_path_marker" to="goal_path_marker"/>
+        <remap from="~agent_marker" to="other_agents_marker"/>
+        <remap from="~agent_markers" to="other_agents_markers"/>
+        
+        <!-- Subscriptions -->
+        <remap from="~pose" to="pose"/>
+        <remap from="~velocity" to="velocity"/>
+        <remap from="~safe_actions" to="local_path_finder/safe_actions"/>
+        <remap from="~planner_mode" to="planner_fsm/mode"/>
+        <remap from="~goal" to="move_base_simple/goal"/>
+        <remap from="~clusters" to="cluster/output/clusters"/>
+        <remap from="~peds" to="/ped_traj"/>
+        
+        <!-- Parameters -->
+        <param name="~jackal_speed" value="$(arg jackal_speed)"/>
+
+    </node>
+
+    <node pkg="development" type="mit_helper.py" name="mit_helper">
+        
+        <!-- Publications -->
+        <remap from="~pose" to="/pose"/>
+        <remap from="~velocity" to="/velocity"/>
+        <remap from="~pedtraj" to="cluster/output/clusters"/>
+        
+        <!-- Subscriptions -->
+        <remap from="~odom" to="/odometry/filtered"/>
+    
+    </node>
+
+
+</launch>

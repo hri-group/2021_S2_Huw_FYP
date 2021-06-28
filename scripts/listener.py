@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import rospy
 from pedsim_msgs.msg import *
 from geometry_msgs.msg import Pose, PoseStamped, Twist, Vector3,PoseWithCovariance,TwistWithCovariance,Point
@@ -7,6 +8,12 @@ import random
 import math
 import copy
 import numpy as np
+
+import rospkg
+
+import network
+import agent
+import util
 
 def distance_between(point1,point2):
     # finds distance between two point messages. 
@@ -47,6 +54,34 @@ class Policy():
         # test to see if we can publish twist with linear. 
         x_vel = min_ped.x - robot_pos.x
         y_vel = min_ped.y - robot_pos.y
+
+        desired_yaw = self.desired_action[1]
+        yaw_error = desired_yaw - self.psi
+        if abs(yaw_error) > np.pi:
+            yaw_error -= np.sign(yaw_error)*2*np.pi
+        # print 'yaw_error:',yaw_error
+        # max_yaw_error = 0.8
+        # yaw_error = self.desired_action[1]
+        gain = 2
+        vw = gain*yaw_error
+
+        use_d_min = False
+        if True: 
+            use_d_min = True
+            # print "vmax:", self.find_vmax(self.d_min,yaw_error)
+            vx = min(self.desired_action[0], self.find_vmax(self.d_min,yaw_error))
+        else:
+            vx = self.desired_action[0]
+        # print "vx:", vx
+        # elif abs(yaw_error) < max_yaw_error:
+        #     vw = gain*yaw_error
+        # else:
+        #     vw = gain*max_yaw_error*np.sign(yaw_error)
+
+        twist = Twist()
+        twist.angular.z = vw
+        twist.linear.x = vx
+        self.pub_twist.publish(twist)
 
         twist = Twist()
         twist.linear.x = x_vel
@@ -99,7 +134,7 @@ class Jackal():
         q = msg.pose.orientation
         self.psi = np.arctan2(2.0*(q.w*q.z + q.x*q.y), 1-2*(q.y*q.y+q.z*q.z)) # bounded by [-pi, pi]
         self.pose = msg
-        print self.psi
+
 
     def cbPeds(self,msg):
         ped_locations = []
@@ -135,6 +170,16 @@ class Jackal():
 
 
 def main():
+    file_dir = os.path.dirname(os.path.realpath(__file__))
+    plt.rcParams.update({'font.size': 18})
+    rospack = rospkg.RosPack()
+
+    a = network.Actions()
+    actions = a.actions
+    num_actions = a.num_actions
+    nn = network.NetworkVP_rnn(network.Config.DEVICE, 'network', num_actions)
+    nn.simple_load(rospack.get_path('cadrl_ros')+'/checkpoints/network_01900000')
+
 
     rospy.init_node('huw_jackal_node', anonymous=False)
     print "Hello world from Jackal."
