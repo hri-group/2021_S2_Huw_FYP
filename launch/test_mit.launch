@@ -1,10 +1,10 @@
 <launch>
 	<arg name="jackal_speed" default="1.2"/>
 
-    <include file="$(find jackal_gazebo)/launch/empty_world.launch">
+    <!--include file="$(find jackal_gazebo)/launch/empty_world.launch">
         <arg name="gui" value="false" />
         <arg name="headless" value="true" />
-    </include>
+    </include-->
 
     <include file="$(find pedsim_simulator)/launch/huw_test.launch"/>
 
