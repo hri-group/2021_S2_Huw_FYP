@@ -110,8 +110,9 @@ import roslibpy
 
 def convert_to_msg(x,y,z,confidence,detection_id):
     msg = {}
-    pose = {'position':{'x':x,'y':y,'z':z}, 'orientation':{'x':0,'y':0,'z':0,'w':0}}
-    msg['pose'] = {'pose':pose, 'covariance':[0]*36}
+    pose = {'position':{'x':x/1000,'y':y/1000,'z':z/1000}, 'orientation':{'x':0,'y':0,'z':0,'w':0}} # divide by 1000 as spencer expects m not mm. 
+    msg['pose'] = {'pose':pose, 'covariance':[0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 999999999.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 999999.0, 999999.0, 999999.0, 0.0, 0.0, 0.0, 999999.0, 999999.0, 999999.0, 0.0, 0.0, 0.0, 999999.0, 999999.0, 999999.0]
+}
     msg['modality'] = 'stereo'
     msg['confidence'] = confidence
     msg['detection_id'] = detection_id
@@ -143,7 +144,7 @@ with dai.Device(pipeline) as device:
     detection_count = 0
 
     while True:
-        inPreview = previewQueue.get() #TODO get blocks unitl message is available, may be better using tryget
+        inPreview = previewQueue.get() #TODO get blocks until message is available, may be better using tryget
         inNN = detectionNNQueue.get()
         depth = depthQueue.get()
 
@@ -208,7 +209,7 @@ with dai.Device(pipeline) as device:
         cv2.imshow("depth", depthFrameColor)
         cv2.imshow("rgb", frame)
         if client.is_connected and len(person_msgs)>0:
-            talker.publish(roslibpy.Message({'header': roslibpy.Header(seq=detection_count, stamp=None, frame_id='base_frame'),'detections':person_msgs}))
+            talker.publish(roslibpy.Message({'header': roslibpy.Header(seq=detection_count, stamp=None, frame_id='base_footprint'),'detections':person_msgs}))
             print(person_msgs)
 
 
