@@ -44,6 +44,7 @@ parser.add_argument('--nnBlobPath', type=str, help='Blob file for neural net det
 parser.add_argument('--oak_camera_id',type=str,help='OAK-D MxID to run detections on')
 parser.add_argument('--oak_camera_num',type=int,help='OAK-D camera index to run detections on')
 parser.add_argument('--ros_tf_frame',type=str,help='tf frame that detections occur in', default='base_footprint')
+parser.add_argument('--ros_output_topic',type=str,help='ros topic to output detections', default='/spencer/perception/detected_persons')
 args = parser.parse_args()
 
 if not Path(args.nnBlobPath).exists():
@@ -119,7 +120,8 @@ import roslibpy
 
 def convert_to_msg(x,y,z,confidence,detection_id):
     msg = {}
-    pose = {'position':{'x':x/1000,'y':y/1000,'z':z/1000}, 'orientation':{'x':0,'y':0,'z':0,'w':0}} # divide by 1000 as spencer expects m not mm. 
+    # divide by 1000 as spencer expects m not mm. -1 * x as I think spatial data is given in a left handed coordinate system TODO: check this
+    pose = {'position':{'x':-1*x/1000,'y':y/1000,'z':z/1000}, 'orientation':{'x':0,'y':0,'z':0,'w':0}} 
     msg['pose'] = {'pose':pose, 'covariance':[0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 999999999.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 999999.0, 999999.0, 999999.0, 0.0, 0.0, 0.0, 999999.0, 999999.0, 999999.0, 0.0, 0.0, 0.0, 999999.0, 999999.0, 999999.0]
 }
     msg['modality'] = 'stereo'
@@ -130,7 +132,7 @@ def convert_to_msg(x,y,z,confidence,detection_id):
 
 client = roslibpy.Ros(host='localhost', port=9090)
 client.run()
-talker = roslibpy.Topic(client, '/spencer/perception/detected_persons', 'spencer_tracking_msgs/DetectedPersons')
+talker = roslibpy.Topic(client, args.ros_output_topic, 'spencer_tracking_msgs/DetectedPersons')
 
 if args.oak_camera_id is not None:
     device_found,device_info = dai.Device.getDeviceByMxId(args.oak_camera_id)
@@ -224,11 +226,11 @@ with dai.Device(pipeline,device_info) as device:
             detection_count = detection_count + 1
 
         cv2.putText(frame, "NN fps: {:.2f}".format(fps), (2, frame.shape[0] - 4), cv2.FONT_HERSHEY_TRIPLEX, 0.4, color)
-        cv2.imshow("depth " + str(device_info.getMxId()), depthFrameColor)
+        # cv2.imshow("depth " + str(device_info.getMxId()), depthFrameColor)
         cv2.imshow("rgb " + str(device_info.getMxId()), frame)
         if client.is_connected and len(person_msgs)>0:
             talker.publish(roslibpy.Message({'header': roslibpy.Header(seq=detection_count, stamp=None, frame_id=args.ros_tf_frame),'detections':person_msgs}))
-            print(person_msgs)
+            # print(person_msgs)
 
 
 

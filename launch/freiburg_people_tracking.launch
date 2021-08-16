@@ -5,7 +5,7 @@
 
     <arg name="fuse_detections" default="true"/>
     <arg name="static_map_filter" default="false"/>
-    <arg name="rgbd" default="false"/>
+    <arg name="rgbd" default="true"/>
     <arg name="laser_low_confidence_detections" default="true"/>
     
     <arg name="tracker" default="true"/>
@@ -66,8 +66,8 @@
     </group>
 
     <!-- Filter tracks that are output by people tracker (e.g. visually confirmed tracks, moving tracks etc. on separate topics) -->
-    <include file="$(find spencer_people_tracking_launch)/launch/tracking/filter_tracks.launch">
+    <!--include file="$(find spencer_people_tracking_launch)/launch/tracking/filter_tracks.launch">
         <arg name="base_footprint_frame_id" value="$(arg base_footprint_frame_id)"/>
-    </include>
+    </include-->
 
 </launch>
