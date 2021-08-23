@@ -10,12 +10,12 @@
     </include>
 
     <!-- If RGB-D is enabled, fuse lasers and RGB-D -->
-    <!--include file="$(find spencer_detected_person_association)/launch/fuse_lasers_and_rgbd.launch" if="$(arg rgbd)"/-->
+    <include file="$(find spencer_detected_person_association)/launch/fuse_lasers_and_rgbd.launch" if="$(arg rgbd)"/>
     
     <!-- Re-publish final composite detections as normal detections, for processing by the tracker-->
     <group ns="/spencer/perception_internal/detected_person_association">
         <!-- Final primary detection composites will be on this topic -->
-        <arg name="final_composite_topic" value="composite/oak_aggregated" if="$(arg rgbd)"/>
+        <arg name="final_composite_topic" value="composite/lasers_upper_body_fused" if="$(arg rgbd)"/>
         <arg name="final_composite_topic" value="composite/lasers_aggregated"   unless="$(arg rgbd)"/>
 
         <!-- Primary detections -->

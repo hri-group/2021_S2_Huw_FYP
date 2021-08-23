@@ -5,18 +5,22 @@
 
 
     <!-- TF frame IDs used by some detectors, and tracking components -->
-    <arg name="base_footprint_frame_id" default="base_footprint"/>  <!-- name of the robot's base frame after projection onto the ground plane -->
+    <arg name="base_footprint_frame_id" default="base_link"/>  <!-- name of the robot's base frame after projection onto the ground plane -->
     <arg name="world_frame_id" default="odom"/>  <!-- this is the fixed tracking frame -->
 
     <!--Launch rosbridge to enable detections from OAK-D devices-->
     <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+
+    <include file="$(find spencer_people_tracking_launch)/launch/detectors/laser_detectors.launch">
+    <arg name="rear"  value="false"/>
+    </include>
 
     <!-- Set up dummy transforms into an imaginary robot and odom frame -->
     <group if="$(arg dummy_transforms)">
         <node name="tf_oak_0" pkg="tf" type="static_transform_publisher" args="0 0 0 1.57079632679 0 1.57079632679 $(arg base_footprint_frame_id) oak_0_frame 10"/>
         <node name="tf_oak_1" pkg="tf" type="static_transform_publisher" args="0 0 0 0 1.2 0 oak_0_frame oak_1_frame 10"/>
         <node name="tf_oak_2" pkg="tf" type="static_transform_publisher" args="0 0 0 0 -1.2 0 oak_0_frame oak_2_frame 10"/>
-        <node name="tf_odom"  pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 odom $(arg base_footprint_frame_id) 10"/>
+        <!--node name="tf_odom"  pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 odom $(arg base_footprint_frame_id) 10"/-->
     </group>
 
 

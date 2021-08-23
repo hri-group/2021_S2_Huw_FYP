@@ -11,9 +11,9 @@
     <!-- That also allows to spread the association load across two laptops -->
 
     <!-- Aggregate laser detections -->
-    <!--include file="$(find spencer_detected_person_association)/launch/aggregate_lasers.launch">
+    <include file="$(find spencer_detected_person_association)/launch/aggregate_lasers.launch">
         <arg name="common_frame_id" value="$(arg common_frame_id)"/>
-    </include-->
+    </include>
 
     <!-- Aggregate high-recall laser detectors -->
     <!--include file="$(find spencer_detected_person_association)/launch/aggregate_high_recall_lasers.launch">
