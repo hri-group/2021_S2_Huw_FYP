@@ -45,6 +45,7 @@ parser.add_argument('--oak_camera_id',type=str,help='OAK-D MxID to run detection
 parser.add_argument('--oak_camera_num',type=int,help='OAK-D camera index to run detections on')
 parser.add_argument('--ros_tf_frame',type=str,help='tf frame that detections occur in', default='base_footprint')
 parser.add_argument('--ros_output_topic',type=str,help='ros topic to output detections', default='/spencer/perception/detected_persons')
+parser.add_argument('--visualize', type=bool, help='Blob file for neural net detections', default=False)
 args = parser.parse_args()
 
 if not Path(args.nnBlobPath).exists():
@@ -216,19 +217,22 @@ with dai.Device(pipeline,device_info) as device:
             except:
                 label = detection.label
             if label == "person":
-                cv2.putText(frame, str(label), (x1 + 10, y1 + 20), cv2.FONT_HERSHEY_TRIPLEX, 0.5, color)
-                cv2.putText(frame, "{:.2f}".format(detection.confidence*100), (x1 + 10, y1 + 35), cv2.FONT_HERSHEY_TRIPLEX, 0.5, color)
-                cv2.putText(frame, f"X: {int(detection.spatialCoordinates.x)} mm", (x1 + 10, y1 + 50), cv2.FONT_HERSHEY_TRIPLEX, 0.5, color)
-                cv2.putText(frame, f"Y: {int(detection.spatialCoordinates.y)} mm", (x1 + 10, y1 + 65), cv2.FONT_HERSHEY_TRIPLEX, 0.5, color)
-                cv2.putText(frame, f"Z: {int(detection.spatialCoordinates.z)} mm", (x1 + 10, y1 + 80), cv2.FONT_HERSHEY_TRIPLEX, 0.5, color)
+                if args.visualize:
+                    cv2.putText(frame, str(label), (x1 + 10, y1 + 20), cv2.FONT_HERSHEY_TRIPLEX, 0.5, color)
+                    cv2.putText(frame, "{:.2f}".format(detection.confidence*100), (x1 + 10, y1 + 35), cv2.FONT_HERSHEY_TRIPLEX, 0.5, color)
+                    cv2.putText(frame, f"X: {int(detection.spatialCoordinates.x)} mm", (x1 + 10, y1 + 50), cv2.FONT_HERSHEY_TRIPLEX, 0.5, color)
+                    cv2.putText(frame, f"Y: {int(detection.spatialCoordinates.y)} mm", (x1 + 10, y1 + 65), cv2.FONT_HERSHEY_TRIPLEX, 0.5, color)
+                    cv2.putText(frame, f"Z: {int(detection.spatialCoordinates.z)} mm", (x1 + 10, y1 + 80), cv2.FONT_HERSHEY_TRIPLEX, 0.5, color)
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), color, cv2.FONT_HERSHEY_SIMPLEX)
 
-                cv2.rectangle(frame, (x1, y1), (x2, y2), color, cv2.FONT_HERSHEY_SIMPLEX)
                 person_msgs.append(convert_to_msg(int(detection.spatialCoordinates.x),int(detection.spatialCoordinates.y),int(detection.spatialCoordinates.z),detection.confidence,detection_count))
                 detection_count = detection_count + 1
 
-        cv2.putText(frame, "NN fps: {:.2f}".format(fps), (2, frame.shape[0] - 4), cv2.FONT_HERSHEY_TRIPLEX, 0.4, color)
-        # cv2.imshow("depth " + str(device_info.getMxId()), depthFrameColor)
-        cv2.imshow("rgb " + str(device_info.getMxId()), frame)
+        if args.visualize:
+            cv2.putText(frame, "NN fps: {:.2f}".format(fps), (2, frame.shape[0] - 4), cv2.FONT_HERSHEY_TRIPLEX, 0.4, color)
+            # cv2.imshow("depth " + str(device_info.getMxId()), depthFrameColor)
+            cv2.imshow("rgb " + str(device_info.getMxId()), frame)
+            
         if client.is_connected and len(person_msgs)>0:
             talker.publish(roslibpy.Message({'header': roslibpy.Header(seq=detection_count, stamp=None, frame_id=args.ros_tf_frame),'detections':person_msgs}))
             # print(person_msgs)
