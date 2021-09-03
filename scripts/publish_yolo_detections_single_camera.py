@@ -133,7 +133,11 @@ def convert_to_msg(x,y,z,confidence,detection_id):
 
 client = roslibpy.Ros(host='localhost', port=9090)
 client.run()
-talker = roslibpy.Topic(client, args.ros_output_topic, 'spencer_tracking_msgs/DetectedPersons')
+talker_detections = roslibpy.Topic(client, args.ros_output_topic, 'spencer_tracking_msgs/DetectedPersons')
+talker_image = roslibpy.Topic(client, '/oak' + str(args.oak_camera_num) + '/image/compressed', 'sensor_msgs/CompressedImage')
+
+talker_detections.advertise()
+talker_image.advertise()
 
 if args.oak_camera_id is not None:
     device_found,device_info = dai.Device.getDeviceByMxId(args.oak_camera_id)
@@ -234,14 +238,17 @@ with dai.Device(pipeline,device_info) as device:
             cv2.imshow("rgb " + str(device_info.getMxId()), frame)
             
         if client.is_connected and len(person_msgs)>0:
-            talker.publish(roslibpy.Message({'header': roslibpy.Header(seq=detection_count, stamp=None, frame_id=args.ros_tf_frame),'detections':person_msgs}))
+            talker_detections.publish(roslibpy.Message({'header': roslibpy.Header(seq=detection_count, stamp=None, frame_id=args.ros_tf_frame),'detections':person_msgs}))
+            if args.visualize:
+                talker_image.publish(dict(format='jpeg', data=np.array(cv2.imencode('.jpg', frame)[1]).tostring()))
             # print(person_msgs)
 
 
 
 
         if cv2.waitKey(1) == ord('q'):
-            talker.unadvertise()
+            talker_detections.unadvertise()
+            talker_image.unadvertise()
             client.terminate()
             break
 
