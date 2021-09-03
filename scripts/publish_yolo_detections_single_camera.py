@@ -2,13 +2,15 @@
 
 from pathlib import Path
 import sys
+sys.path.remove('/home/administrator/catkin_ws/devel/lib/python2.7/dist-packages')
+sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
 import cv2
 import depthai as dai
 import numpy as np
 import time
 
 import argparse
-
+import base64
 
 
 '''
@@ -42,10 +44,10 @@ oak_camera_ids = ['14442C1071C48ED000','14442C10517660D700','14442C10D11C61D700'
 parser = argparse.ArgumentParser(description='Inputs for OAK-D camera detection')
 parser.add_argument('--nnBlobPath', type=str, help='Blob file for neural net detections', default=nnBlobPath)
 parser.add_argument('--oak_camera_id',type=str,help='OAK-D MxID to run detections on')
-parser.add_argument('--oak_camera_num',type=int,help='OAK-D camera index to run detections on')
-parser.add_argument('--ros_tf_frame',type=str,help='tf frame that detections occur in', default='base_footprint')
+parser.add_argument('--oak_camera_num',type=int,help='OAK-D camera index to run detections on', default=0)
+parser.add_argument('--ros_tf_frame',type=str,help='tf frame that detections occur in', default='base_link')
 parser.add_argument('--ros_output_topic',type=str,help='ros topic to output detections', default='/spencer/perception/detected_persons')
-parser.add_argument('--visualize', type=bool, help='Blob file for neural net detections', default=False)
+parser.add_argument('--visualize', type=bool, help='Blob file for neural net detections', default=True)
 args = parser.parse_args()
 
 if not Path(args.nnBlobPath).exists():
@@ -168,12 +170,16 @@ with dai.Device(pipeline,device_info) as device:
     color = (255, 255, 255)
 
     detection_count = 0
+    img_count = 0
+
     while True:
         inPreview = previewQueue.get() #TODO get blocks until message is available, may be better using tryget
         inNN = detectionNNQueue.get()
         depth = depthQueue.get()
 
         counter+=1
+        img_count+=1
+
         current_time = time.monotonic()
         if (current_time - startTime) > 1 :
             fps = counter / (current_time - startTime)
@@ -235,12 +241,13 @@ with dai.Device(pipeline,device_info) as device:
         if args.visualize:
             cv2.putText(frame, "NN fps: {:.2f}".format(fps), (2, frame.shape[0] - 4), cv2.FONT_HERSHEY_TRIPLEX, 0.4, color)
             # cv2.imshow("depth " + str(device_info.getMxId()), depthFrameColor)
-            cv2.imshow("rgb " + str(device_info.getMxId()), frame)
+            # cv2.imshow("rgb " + str(device_info.getMxId()), frame)
             
         if client.is_connected and len(person_msgs)>0:
             talker_detections.publish(roslibpy.Message({'header': roslibpy.Header(seq=detection_count, stamp=None, frame_id=args.ros_tf_frame),'detections':person_msgs}))
-            if args.visualize:
-                talker_image.publish(dict(format='jpeg', data=np.array(cv2.imencode('.jpg', frame)[1]).tostring()))
+        if client.is_connected and  args.visualize:
+            frame_compressed = base64.b64encode(cv2.imencode('.jpg', frame)[1]).decode('ascii')
+            talker_image.publish(dict(header=roslibpy.Header(seq=img_count, stamp=None, frame_id=args.ros_tf_frame),format='jpeg', data=frame_compressed))
             # print(person_msgs)
 
 
