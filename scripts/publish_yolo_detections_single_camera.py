@@ -8,6 +8,7 @@ import cv2
 import depthai as dai
 import numpy as np
 import time
+import math
 
 import argparse
 import base64
@@ -120,7 +121,6 @@ spatialDetectionNetwork.passthroughDepth.link(xoutDepth.input)
 # start ROS node
 
 import roslibpy
-import rospy
 
 def convert_to_msg(x,y,z,confidence,detection_id):
     msg = {}
@@ -177,8 +177,11 @@ with dai.Device(pipeline,device_info) as device:
         inPreview = previewQueue.get() #TODO get blocks until message is available, may be better using tryget
         inNN = detectionNNQueue.get()
         depth = depthQueue.get()
-
-        time_stamp = rospy.Time.from_sec(time.time())
+        
+        cur_time = time.time()
+        secs = math.floor(cur_time)
+        nsecs = (cur_time - sec)*10**9
+        time_stamp = dict(secs=secs, nsecs=nsecs)
 
         counter+=1
         img_count+=1
