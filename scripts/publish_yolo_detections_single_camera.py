@@ -120,6 +120,7 @@ spatialDetectionNetwork.passthroughDepth.link(xoutDepth.input)
 # start ROS node
 
 import roslibpy
+import rospy
 
 def convert_to_msg(x,y,z,confidence,detection_id):
     msg = {}
@@ -176,6 +177,8 @@ with dai.Device(pipeline,device_info) as device:
         inPreview = previewQueue.get() #TODO get blocks until message is available, may be better using tryget
         inNN = detectionNNQueue.get()
         depth = depthQueue.get()
+
+        time_stamp = rospy.Time.from_sec(time.time())
 
         counter+=1
         img_count+=1
@@ -244,10 +247,10 @@ with dai.Device(pipeline,device_info) as device:
             # cv2.imshow("rgb " + str(device_info.getMxId()), frame)
             
         if client.is_connected and len(person_msgs)>0:
-            talker_detections.publish(roslibpy.Message({'header': roslibpy.Header(seq=detection_count, stamp=None, frame_id=args.ros_tf_frame),'detections':person_msgs}))
+            talker_detections.publish(roslibpy.Message({'header': roslibpy.Header(seq=detection_count, stamp=None, frame_id=args.ros_tf_frame,time=time_stamp),'detections':person_msgs}))
         if client.is_connected and  args.visualize:
             frame_compressed = base64.b64encode(cv2.imencode('.jpg', frame)[1]).decode('ascii')
-            talker_image.publish(dict(header=roslibpy.Header(seq=img_count, stamp=None, frame_id=args.ros_tf_frame),format='jpeg', data=frame_compressed))
+            talker_image.publish(dict(header=roslibpy.Header(seq=img_count, stamp=None, frame_id=args.ros_tf_frame,time=time_stamp),format='jpeg', data=frame_compressed))
             # print(person_msgs)
 
 
