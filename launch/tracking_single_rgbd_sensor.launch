@@ -2,6 +2,7 @@
     <!-- Launch file arguments -->
     <arg name="visualization" default="true"/> <!-- start Rviz with predefined configuration? -->
     <arg name="dummy_transforms" default="true"/> <!-- publish TF transform for sensor to groundplane -->
+    <arg name="leg_detector" default="false"/> <!-- Choose whether to use upper body or leg laser detector-->
 
 
     <!-- TF frame IDs used by some detectors, and tracking components -->
@@ -11,8 +12,23 @@
     <!--Launch rosbridge to enable detections from OAK-D devices-->
     <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
 
-    <include file="$(find spencer_people_tracking_launch)/launch/detectors/laser_detectors.launch">
-    <arg name="rear"  value="false"/>
+    <!-- Launch laser detector-->
+
+    <include file="$(find srl_laser_detectors)/launch/learned_detector_with_segmentation.launch" ns="/spencer/perception_internal/people_detection/laser_front" unless="$(arg leg_detector)">
+        <arg name="model_prefix" default="lms500_0.25deg_height70cm_fr_rathausgasse"/>
+        <arg name="type" value="random_forest"/>
+        <arg name="detected_persons" value="/spencer/perception_internal/detected_persons/laser_front"/>
+        <arg name="laser" value="/scan"/>
+        <arg name="max_avg_distance_from_sensor" default="15"/>
+        <arg name="detection_id_offset" value="1"/>
+        <arg name="detection_id_increment" default="1"/>
+        <arg name="pose_variance" value="0.1"/> <!-- affects gain of Kalman filter! may be overriden in nnt.launch! -->
+    </include>
+
+    <include file="$(find spencer_leg_detector_wrapper)/launch/leg_detector.launch" if="$(arg leg_detector)">
+        <!-- May need to change the subscribed topic for leg to person (to avoid double measurement)-->
+        <arg name="scan"  value="/scan"/>
+        <arg name="detected_persons" default="/spencer/perception_internal/detected_persons/laser_front"/> 
     </include>
 
     <!-- Set up dummy transforms into an imaginary robot and odom frame -->
