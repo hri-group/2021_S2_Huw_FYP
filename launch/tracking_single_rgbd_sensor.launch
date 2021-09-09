@@ -2,7 +2,8 @@
     <!-- Launch file arguments -->
     <arg name="visualization" default="true"/> <!-- start Rviz with predefined configuration? -->
     <arg name="dummy_transforms" default="true"/> <!-- publish TF transform for sensor to groundplane -->
-    <arg name="leg_detector" default="false"/> <!-- Choose whether to use upper body or leg laser detector-->
+    <arg name="lasers" default="true"/> <!-- Choose whether to use laser detector-->
+    <arg name="leg_detector" default="true"/> <!-- Choose whether to use upper body or leg laser detector-->
 
 
     <!-- TF frame IDs used by some detectors, and tracking components -->
@@ -10,10 +11,10 @@
     <arg name="world_frame_id" default="odom"/>  <!-- this is the fixed tracking frame -->
 
     <!--Launch rosbridge to enable detections from OAK-D devices-->
-    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+    <!--include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/-->
 
     <!-- Launch laser detector-->
-
+    <group if="$(arg lasers)">
     <include file="$(find srl_laser_detectors)/launch/learned_detector_with_segmentation.launch" ns="/spencer/perception_internal/people_detection/laser_front" unless="$(arg leg_detector)">
         <arg name="model_prefix" default="lms500_0.25deg_height70cm_fr_rathausgasse"/>
         <arg name="type" value="random_forest"/>
@@ -29,7 +30,9 @@
         <!-- May need to change the subscribed topic for leg to person (to avoid double measurement)-->
         <arg name="scan"  value="/scan"/>
         <arg name="detected_persons" default="/spencer/perception_internal/detected_persons/laser_front"/> 
+        <arg name="config_file" value="huw.yaml"/>
     </include>
+    </group>
 
     <!-- Set up dummy transforms into an imaginary robot and odom frame -->
     <group if="$(arg dummy_transforms)">
@@ -50,9 +53,10 @@
     <!-- As there is not yet any high-recall/low-confidence detector for RGB-D, and we are not using laser, tracks may get deleted too quickly in case of missed detections.
          To deal with this, for the moment, we increase the maximum number of occluded frames to be  a bit more tolerant towards missed detections.
          This works fine in uncrowded environments which are not very dynamic. -->
-    <!--rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_occlusions_before_deletion">50</rosparam>
-    <rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_occlusions_before_deletion_of_mature_track">200</rosparam-->
-
+    <group unless="$(arg lasers)">
+    <rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_occlusions_before_deletion">50</rosparam>
+    <rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_occlusions_before_deletion_of_mature_track">200</rosparam>
+    </group>
     <!-- Group tracking -->
     <!--include file="$(find spencer_people_tracking_launch)/launch/tracking/group_tracking.launch"/--> 
 
