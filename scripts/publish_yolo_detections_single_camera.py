@@ -93,7 +93,7 @@ spatialDetectionNetwork.setConfidenceThreshold(0.5)
 spatialDetectionNetwork.input.setBlocking(False)
 spatialDetectionNetwork.setBoundingBoxScaleFactor(0.5)
 spatialDetectionNetwork.setDepthLowerThreshold(100)
-spatialDetectionNetwork.setDepthUpperThreshold(5000)
+spatialDetectionNetwork.setDepthUpperThreshold(20000) # this is furthest away a detection will be allowed, otherwise outputs zero!
 # Yolo specific parameters
 spatialDetectionNetwork.setNumClasses(80)
 spatialDetectionNetwork.setCoordinateSize(4)
