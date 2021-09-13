@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="base_frame" default="base_link" />
+    
+    <group ns="oak_0">
+
+    <include file="$(find depthai_examples)/launch/yolov4_publisher.launch">
+    <arg name="camera_name" value="oak_0"/>
+    <arg name="base_frame" value="$(arg base_frame)"/>
+    <arg name="cam_pos_x" value="0.0"/> <!-- Position respect to base frame (i.e. "base_link) -->
+    <arg name="cam_pos_y" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
+    <arg name="cam_pos_z" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
+    <arg name="cam_roll" value="1.5708" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+    <arg name="cam_pitch" value="0.0" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+    <arg name="cam_yaw" value="1.5708" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+
+    <arg name="camera_param_uri" value="package://depthai_examples/params/camera" />
+    <arg name="camera_mxid" value="14442C1071C48ED000"/>
+    </include>
+
+    <!--Convert OAK message to spencer detected person message-->
+    <node name="oak_spencer_converter" pkg="development" type="oak_spencer_converter.py" output="screen" required="true">
+        <remap from="~oak_detections" to="/oak_0/yolov4_publisher/color/yolov4_Spatial_detections"/>
+        <remap from="~spencer_detections" to="/spencer/perception_internal/detected_persons/oak_0"/>
+    </node>
+
+    </group>
+    
+    <group ns="oak_1">
+
+    <include file="$(find depthai_examples)/launch/yolov4_publisher.launch">
+    <arg name="camera_name" value="oak_1"/>
+    <arg name="base_frame" value="$(arg base_frame)"/>
+    <arg name="cam_pos_x" value="0.0"/> <!-- Position respect to base frame (i.e. "base_link) -->
+    <arg name="cam_pos_y" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
+    <arg name="cam_pos_z" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
+    <arg name="cam_roll" value="1.5708" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+    <arg name="cam_pitch" value="0.0" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+    <arg name="cam_yaw" value="1.5708" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+
+    <arg name="camera_param_uri" value="package://depthai_examples/params/camera" />
+    <arg name="camera_mxid" value="14442C10517660D700"/>
+    </include>
+
+    <node name="oak_spencer_converter" pkg="development" type="oak_spencer_converter.py" output="screen" required="true">
+        <remap from="~oak_detections" to="/oak_1/yolov4_publisher/color/yolov4_Spatial_detections"/>
+        <remap from="~spencer_detections" to="/spencer/perception_internal/detected_persons/oak_1"/>
+    </node>
+
+    </group>
+
+    <group ns="oak_2">
+
+    <include file="$(find depthai_examples)/launch/yolov4_publisher.launch">
+    <arg name="camera_name" value="oak_2"/>
+    <arg name="base_frame" value="$(arg base_frame)"/>
+    <arg name="cam_pos_x" value="0.0"/> <!-- Position respect to base frame (i.e. "base_link) -->
+    <arg name="cam_pos_y" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
+    <arg name="cam_pos_z" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
+    <arg name="cam_roll" value="1.5708" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+    <arg name="cam_pitch" value="0.0" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+    <arg name="cam_yaw" value="1.5708" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+
+    <arg name="camera_param_uri" value="package://depthai_examples/params/camera" />
+    <arg name="camera_mxid" value="14442C10D11C61D700"/>
+    </include>
+
+    <node name="oak_spencer_converter" pkg="development" type="oak_spencer_converter.py" output="screen" required="true">
+        <remap from="~oak_detections" to="/oak_2/yolov4_publisher/color/yolov4_Spatial_detections"/>
+        <remap from="~spencer_detections" to="/spencer/perception_internal/detected_persons/oak_2"/>
+    </node>
+
+    </group>
+
+</launch>
