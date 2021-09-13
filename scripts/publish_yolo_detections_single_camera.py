@@ -2,8 +2,11 @@
 
 from pathlib import Path
 import sys
-sys.path.remove('/home/administrator/catkin_ws/devel/lib/python2.7/dist-packages')
-sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
+try:
+    sys.path.remove('/home/administrator/catkin_ws/devel/lib/python2.7/dist-packages')
+    sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
+except ValueError:
+    pass
 import cv2
 import depthai as dai
 import numpy as np
