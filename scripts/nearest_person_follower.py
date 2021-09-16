@@ -11,7 +11,7 @@ import tf
 from actionlib_msgs.msg import GoalID
 from copy import deepcopy
 
-class mit_spencer_helper():
+class nearest_person_follower():
     def __init__(self):
         self.target_pose = []
         self.last_tracked_person_time = rospy.get_time()
@@ -60,30 +60,11 @@ class mit_spencer_helper():
 
         self.goal_publisher.publish(self.target_pose)
         self.last_tracked_person_time = rospy.get_time()
-
-    def cbOdom(self,msg):
-        # pose 
-        pose = PoseStamped()
-        pose.pose = msg.pose.pose
-        pose.header = msg.header
-
-        # velocity
-        local_vel = Vector3Stamped()
-        local_vel.vector = msg.twist.twist.linear
-        local_vel.header = deepcopy(msg.header)
-        local_vel.header.frame_id = deepcopy(msg.child_frame_id)
-        try:
-            global_vel = self.listener.transformVector3(msg.header.frame_id,local_vel)
-        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-            return
-
-        self.pose_publisher.publish(pose)
-        self.vel_publisher.publish(global_vel.vector)
         
             
 
 if __name__ == '__main__':
-    rospy.init_node('mit_spencer_helper', anonymous=False)
+    rospy.init_node('nearest_person_follower', anonymous=False)
     print "Topic converter online."
-    helper = mit_spencer_helper()
+    helper = nearest_person_follower()
     rospy.spin()
