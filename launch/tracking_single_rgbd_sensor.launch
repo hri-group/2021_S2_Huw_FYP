@@ -1,7 +1,7 @@
 <launch>
     <!-- Launch file arguments -->
     <arg name="visualization" default="true"/> <!-- start Rviz with predefined configuration? -->
-    <arg name="dummy_transforms" default="true"/> <!-- publish TF transform for sensor to groundplane -->
+    <arg name="dummy_transforms" default="false"/> <!-- publish TF transform for sensor to groundplane -->
     <arg name="lasers" default="true"/> <!-- Choose whether to use laser detector-->
     <arg name="leg_detector" default="true"/> <!-- Choose whether to use upper body or leg laser detector-->
 
@@ -12,6 +12,9 @@
 
     <!--Launch rosbridge to enable detections from OAK-D devices-->
     <!--include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/-->
+
+    <!--Launch OAK-d camera detectors-->
+    <include file="$(find development)/launch/launch_oak_detectors.launch"/>
 
     <!-- Launch laser detector-->
     <group if="$(arg lasers)">

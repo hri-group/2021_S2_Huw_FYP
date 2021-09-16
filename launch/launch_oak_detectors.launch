@@ -2,20 +2,20 @@
 <launch>
 
     <arg name="base_frame" default="oak-d_frame" />
-    <arg name="parent_frame" default="base_link" />
+    <arg name="parent_frame" default="flea3" />
     
     <group ns="oak_0">
 
     <include file="$(find depthai_examples)/launch/yolov4_publisher.launch">
     <arg name="camera_name" value="oak_0"/>
-    <arg name="base_frame" value="$(arg base_frame)"/>
+    <arg name="base_frame" value="$(arg base_frame)_0"/>
     <arg name="parent_frame" value="$(arg parent_frame)"/>
     <arg name="cam_pos_x" value="0.0"/> <!-- Position respect to base frame (i.e. "base_link) -->
     <arg name="cam_pos_y" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
     <arg name="cam_pos_z" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
-    <arg name="cam_roll" value="1.5708" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+    <arg name="cam_roll" value="0.0" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
     <arg name="cam_pitch" value="0.0" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
-    <arg name="cam_yaw" value="1.5708" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+    <arg name="cam_yaw" value="0.0" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
 
     <arg name="camera_param_uri" value="package://depthai_examples/params/camera" />
     <arg name="camera_mxid" value="14442C1071C48ED000"/>
@@ -33,14 +33,14 @@
 
     <include file="$(find depthai_examples)/launch/yolov4_publisher.launch">
     <arg name="camera_name" value="oak_1"/>
-    <arg name="base_frame" value="$(arg base_frame)"/>
-    <arg name="parent_frame" value="$(arg parent_frame)"/>
+    <arg name="base_frame" value="$(arg base_frame)_1"/>
+    <arg name="parent_frame" value="$(arg base_frame)_0"/>
     <arg name="cam_pos_x" value="0.0"/> <!-- Position respect to base frame (i.e. "base_link) -->
     <arg name="cam_pos_y" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
     <arg name="cam_pos_z" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
-    <arg name="cam_roll" value="1.5708" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+    <arg name="cam_roll" value="0.0" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
     <arg name="cam_pitch" value="0.0" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
-    <arg name="cam_yaw" value="1.5708" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+    <arg name="cam_yaw" value="1.2" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
 
     <arg name="camera_param_uri" value="package://depthai_examples/params/camera" />
     <arg name="camera_mxid" value="14442C10517660D700"/>
@@ -57,14 +57,14 @@
 
     <include file="$(find depthai_examples)/launch/yolov4_publisher.launch">
     <arg name="camera_name" value="oak_2"/>
-    <arg name="base_frame" value="$(arg base_frame)"/>
-    <arg name="parent_frame" value="$(arg parent_frame)"/>`
+    <arg name="base_frame" value="$(arg base_frame)_2"/>
+    <arg name="parent_frame" value="$(arg base_frame)_0"/>`
     <arg name="cam_pos_x" value="0.0"/> <!-- Position respect to base frame (i.e. "base_link) -->
     <arg name="cam_pos_y" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
     <arg name="cam_pos_z" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
-    <arg name="cam_roll" value="1.5708" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+    <arg name="cam_roll" value="0.0" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
     <arg name="cam_pitch" value="0.0" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
-    <arg name="cam_yaw" value="1.5708" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
+    <arg name="cam_yaw" value="-1.2" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
 
     <arg name="camera_param_uri" value="package://depthai_examples/params/camera" />
     <arg name="camera_mxid" value="14442C10D11C61D700"/>
