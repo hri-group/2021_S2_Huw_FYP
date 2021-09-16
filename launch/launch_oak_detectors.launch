@@ -1,13 +1,15 @@
 <?xml version="1.0"?>
 <launch>
 
-    <arg name="base_frame" default="base_link" />
+    <arg name="base_frame" default="oak-d_frame" />
+    <arg name="parent_frame" default="base_link" />
     
     <group ns="oak_0">
 
     <include file="$(find depthai_examples)/launch/yolov4_publisher.launch">
     <arg name="camera_name" value="oak_0"/>
     <arg name="base_frame" value="$(arg base_frame)"/>
+    <arg name="parent_frame" value="$(arg parent_frame)"/>
     <arg name="cam_pos_x" value="0.0"/> <!-- Position respect to base frame (i.e. "base_link) -->
     <arg name="cam_pos_y" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
     <arg name="cam_pos_z" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
@@ -32,6 +34,7 @@
     <include file="$(find depthai_examples)/launch/yolov4_publisher.launch">
     <arg name="camera_name" value="oak_1"/>
     <arg name="base_frame" value="$(arg base_frame)"/>
+    <arg name="parent_frame" value="$(arg parent_frame)"/>
     <arg name="cam_pos_x" value="0.0"/> <!-- Position respect to base frame (i.e. "base_link) -->
     <arg name="cam_pos_y" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
     <arg name="cam_pos_z" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
@@ -55,6 +58,7 @@
     <include file="$(find depthai_examples)/launch/yolov4_publisher.launch">
     <arg name="camera_name" value="oak_2"/>
     <arg name="base_frame" value="$(arg base_frame)"/>
+    <arg name="parent_frame" value="$(arg parent_frame)"/>`
     <arg name="cam_pos_x" value="0.0"/> <!-- Position respect to base frame (i.e. "base_link) -->
     <arg name="cam_pos_y" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
     <arg name="cam_pos_z" value="0.0" /> <!-- Position respect to base frame (i.e. "base_link) -->
