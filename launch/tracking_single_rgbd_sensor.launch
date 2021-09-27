@@ -59,7 +59,8 @@
     <group unless="$(arg lasers)">
     <rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_occlusions_before_deletion">50</rosparam>
     <rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_occlusions_before_deletion_of_mature_track">200</rosparam>
-    </group>
+ <rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_gating_distance">1.0</rosparam>    
+</group>
     <!-- Group tracking -->
     <!--include file="$(find spencer_people_tracking_launch)/launch/tracking/group_tracking.launch"/--> 
 
