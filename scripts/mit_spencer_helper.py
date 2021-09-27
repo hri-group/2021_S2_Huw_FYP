@@ -6,8 +6,6 @@ from nav_msgs.msg import Odometry
 from ford_msgs.msg import PedTrajVec,PedTraj,Pose2DStamped,Clusters
 import tf
 
-from pedsim_msgs.msg import *
-
 from copy import deepcopy
 
 
