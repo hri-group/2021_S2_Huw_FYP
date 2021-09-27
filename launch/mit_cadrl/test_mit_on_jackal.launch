@@ -5,7 +5,8 @@
     <!-- Launch jackal detection pipeline-->
     <include file="$(find development)/launch/tracking_single_rgbd_sensor.launch">
         <arg name="visualization" value="false" />
-        <arg name="lasers" value="false" />
+        <arg name="lasers" value="true" />
+        <arg name="leg_detector" value="true" />
     </include>
 
     <!-- Sets map frame = odom, default true as not set elsewhere-->
@@ -14,7 +15,7 @@
     
 
     <!-- Launch neural net ros wrapper for cadrl predictions-->
-    <node pkg="cadrl_ros" type="cadrl_node.py" name="cadrl_node" output="screen">
+    <node pkg="cadrl_ros" type="cadrl_node.py" name="cadrl_node" output="screen" required="true" ns="mit_cadrl">
         
         <!-- Publications -->
         <remap from="~other_vels" to="other_vels"/>
@@ -39,17 +40,19 @@
 
     </node>
 
-    <node pkg="development" type="mit_helper.py" name="mit_helper">
+    <node pkg="development" type="mit_spencer_helper.py" name="mit_helper" required="true">
         
         <!-- Publications -->
-        <remap from="~pose" to="/pose"/>
-        <remap from="~velocity" to="/velocity"/>
-        <remap from="~pedtraj" to="cluster/output/clusters"/>
+        <remap from="~pose" to="mit_cadrl/pose"/>
+        <remap from="~velocity" to="mit_cadrl/velocity"/>
+        <remap from="~pedtraj" to="mit_cadrl/cluster/output/clusters"/>
         
         <!-- Subscriptions -->
         <remap from="~odom" to="/odometry/filtered"/>
     
     </node>
+
+    <node name="mit_cadrl_cmd_vel_relay" pkg="topic_tools" type="relay" args="mit_cadrl/cmd_vel cmd_vel" /> 
 
 
 </launch>
