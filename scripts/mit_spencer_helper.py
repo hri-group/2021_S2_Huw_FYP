@@ -4,6 +4,7 @@ import rospy
 from geometry_msgs.msg import Pose, PoseStamped, Twist, Vector3,Vector3Stamped,PoseWithCovariance,TwistWithCovariance,Point
 from nav_msgs.msg import Odometry
 from ford_msgs.msg import PedTrajVec,PedTraj,Pose2DStamped,Clusters
+from spencer_tracking_msgs.msg import TrackedPersons
 import tf
 
 from copy import deepcopy
@@ -24,11 +25,12 @@ class mit_spencer_helper():
         
 
         # converting spencer people tracking info to pedtraj messages
-        self.sub_peds = rospy.Subscriber('/spencer/perception/tracked_persons', AgentStates, self.cbPeds)
+        self.sub_peds = rospy.Subscriber('/spencer/perception/tracked_persons', TrackedPersons, self.cbPeds)
         self.ped_traj_publisher = rospy.Publisher('~pedtraj',Clusters,queue_size=1)
 
     def cbPeds(self,msg):
         ped_location = Clusters()
+        ped_location.header = msg.header
         for i in xrange(len(msg.tracks)):
 
             ped_location.labels.append(msg.tracks[i].track_id)
@@ -36,7 +38,6 @@ class mit_spencer_helper():
             ped_location.velocities.append(msg.tracks[i].twist.twist.linear)
 
         self.ped_info = deepcopy(ped_location)
-
         self.ped_traj_publisher.publish(self.ped_info)
 
 
