@@ -1,6 +1,7 @@
 <launch>
 	<arg name="jackal_speed" default="1.2"/>
     <arg name="dummy_transform" default="true"/>
+    <arg name="cadrl_node" default="true"/>
 
     <!-- Launch jackal simulator-->
     <include file="$(find jackal_gazebo)/launch/empty_world.launch">
@@ -17,7 +18,7 @@
     <node name="tf_map_odom_dummy" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 map odom 10" if="$(arg dummy_transform)"/>
 
     <!-- Launch neural net ros wrapper for cadrl predictions-->
-    <node pkg="cadrl_ros" type="cadrl_node.py" name="cadrl_node" output="screen">
+    <node pkg="cadrl_ros" type="cadrl_node.py" name="cadrl_node" output="screen" if="$(arg cadrl_node)">
         
         <!-- Publications -->
         <remap from="~other_vels" to="other_vels"/>
@@ -42,7 +43,7 @@
 
     </node>
 
-    <node pkg="development" type="mit_helper.py" name="mit_helper">
+    <node pkg="development" type="mit_helper.py" name="mit_helper" if="$(arg cadrl_node)">
         
         <!-- Publications -->
         <remap from="~pose" to="/pose"/>
