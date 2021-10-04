@@ -4,7 +4,6 @@
     <arg name="dummy_transforms" default="false"/> <!-- publish TF transform for sensor to groundplane -->
     <arg name="lasers" default="false"/> <!-- Choose whether to use laser detector-->
     <arg name="leg_detector" default="true"/> <!-- Choose whether to use upper body or leg laser detector-->
-    <arg name="dr_spaam_lasers" default="true"/> <!-- Cannot be used in conjunction with laser detectors (set lasers to false)-->
     <arg name="oak_detectors" default="false"/> <!-- Choose whether to use oak-d cameras for detections-->
 
 
@@ -14,9 +13,6 @@
 
     <!--Launch rosbridge to enable detections from OAK-D devices-->
     <!--include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/-->
-
-    <!-- Launch dr_spaam lidar detector-->
-    <include file="$(find dr_spaam_ros)/launch/dr_spaam_ros.launch" if="$(arg dr_spaam_lasers)"/>
 
     <!--Launch OAK-d camera detectors-->
     <include file="$(find development)/launch/launch_oak_detectors.launch" if="$(arg oak_detectors)"/>
