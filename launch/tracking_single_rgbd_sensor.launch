@@ -2,8 +2,10 @@
     <!-- Launch file arguments -->
     <arg name="visualization" default="false"/> <!-- start Rviz with predefined configuration? -->
     <arg name="dummy_transforms" default="false"/> <!-- publish TF transform for sensor to groundplane -->
-    <arg name="lasers" default="true"/> <!-- Choose whether to use laser detector-->
+    <arg name="lasers" default="false"/> <!-- Choose whether to use laser detector-->
     <arg name="leg_detector" default="true"/> <!-- Choose whether to use upper body or leg laser detector-->
+    <arg name="dr_spaam_lasers" default="true"/> <!-- Cannot be used in conjunction with laser detectors (set lasers to false)-->
+    <arg name="oak_detectors" default="false"/> <!-- Choose whether to use oak-d cameras for detections-->
 
 
     <!-- TF frame IDs used by some detectors, and tracking components -->
@@ -13,8 +15,11 @@
     <!--Launch rosbridge to enable detections from OAK-D devices-->
     <!--include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/-->
 
+    <!-- Launch dr_spaam lidar detector-->
+    <include file="$(find dr_spaam_ros)/launch/dr_spaam_ros.launch" if="$(arg dr_spaam_lasers)"/>
+
     <!--Launch OAK-d camera detectors-->
-    <include file="$(find development)/launch/launch_oak_detectors.launch"/>
+    <include file="$(find development)/launch/launch_oak_detectors.launch" if="$(arg oak_detectors)"/>
 
     <!-- Launch laser detector-->
     <group if="$(arg lasers)">
@@ -47,7 +52,7 @@
 
     <!-- People tracking -->
     <include file="$(find development)/launch/freiburg_people_tracking.launch">
-        <arg name="rgbd" default="true"/>
+        <arg name="rgbd" value="$(arg oak_detectors)"/>
         <arg name="laser_low_confidence_detections" default="false"/>
         <arg name="base_footprint_frame_id" value="$(arg base_footprint_frame_id)"/>
         <arg name="world_frame_id" value="$(arg world_frame_id)"/>
@@ -57,10 +62,10 @@
          To deal with this, for the moment, we increase the maximum number of occluded frames to be  a bit more tolerant towards missed detections.
          This works fine in uncrowded environments which are not very dynamic. -->
     <group unless="$(arg lasers)">
-    <rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_occlusions_before_deletion">15</rosparam>
-    <rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_occlusions_before_deletion_of_mature_track">50</rosparam>
- <rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_gating_distance">1.0</rosparam>    
-</group>
+        <rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_occlusions_before_deletion">15</rosparam>
+        <rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_occlusions_before_deletion_of_mature_track">50</rosparam>
+        <rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_gating_distance">1.0</rosparam>    
+    </group>
     <!-- Group tracking -->
     <!--include file="$(find spencer_people_tracking_launch)/launch/tracking/group_tracking.launch"/--> 
 
