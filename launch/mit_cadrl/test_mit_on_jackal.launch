@@ -1,18 +1,21 @@
 <launch>
 	<arg name="jackal_speed" default="1.2"/>
-    <arg name="dummy_transform" default="true"/>
+    <arg name="cartographer" default="false"/>
+    <arg name="lasers" default="true"/>
+    <arg name="launch_detectors" default="true"/>
 
     <!-- Launch jackal detection pipeline-->
-    <include file="$(find development)/launch/tracking_single_rgbd_sensor.launch">
+    <include file="$(find development)/launch/tracking_single_rgbd_sensor.launch" if="$(arg launch_detectors)">
         <arg name="visualization" value="false" />
-        <arg name="lasers" value="true" />
+        <arg name="lasers" value="$(arg lasers)" />
         <arg name="leg_detector" value="true" />
     </include>
 
     <!-- Sets map frame = odom, default true as not set elsewhere-->
-    <node name="tf_map_odom_dummy" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 map odom 10" if="$(arg dummy_transform)"/>
+    <node name="tf_map_odom_dummy" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 map odom 10" unless="$(arg cartographer)"/>
 
-    
+    <!-- Includes google cartographer -->
+    <include file="$(find jackal_cartographer_navigation)/launch/cartographer_demo.launch" if="$(arg cartographer)"/>
 
     <!-- Launch neural net ros wrapper for cadrl predictions-->
     <node pkg="cadrl_ros" type="cadrl_node.py" name="cadrl_node" output="screen" required="true" ns="mit_cadrl">

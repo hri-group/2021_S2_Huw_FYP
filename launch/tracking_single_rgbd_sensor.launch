@@ -1,6 +1,6 @@
 <launch>
     <!-- Launch file arguments -->
-    <arg name="visualization" default="true"/> <!-- start Rviz with predefined configuration? -->
+    <arg name="visualization" default="false"/> <!-- start Rviz with predefined configuration? -->
     <arg name="dummy_transforms" default="false"/> <!-- publish TF transform for sensor to groundplane -->
     <arg name="lasers" default="true"/> <!-- Choose whether to use laser detector-->
     <arg name="leg_detector" default="true"/> <!-- Choose whether to use upper body or leg laser detector-->
@@ -57,8 +57,8 @@
          To deal with this, for the moment, we increase the maximum number of occluded frames to be  a bit more tolerant towards missed detections.
          This works fine in uncrowded environments which are not very dynamic. -->
     <group unless="$(arg lasers)">
-    <rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_occlusions_before_deletion">50</rosparam>
-    <rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_occlusions_before_deletion_of_mature_track">200</rosparam>
+    <rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_occlusions_before_deletion">15</rosparam>
+    <rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_occlusions_before_deletion_of_mature_track">50</rosparam>
  <rosparam param="/spencer/perception_internal/people_tracking/srl_nearest_neighbor_tracker/max_gating_distance">1.0</rosparam>    
 </group>
     <!-- Group tracking -->
