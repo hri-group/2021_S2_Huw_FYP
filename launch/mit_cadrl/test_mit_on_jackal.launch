@@ -52,6 +52,7 @@
         
         <!-- Subscriptions -->
         <remap from="~odom" to="/odometry/filtered"/>
+        <remap from="~peds" to="/spencer/perception/tracked_persons"/>
     
     </node>
 

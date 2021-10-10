@@ -25,7 +25,7 @@ class mit_spencer_helper():
         
 
         # converting spencer people tracking info to pedtraj messages
-        self.sub_peds = rospy.Subscriber('/spencer/perception/tracked_persons', TrackedPersons, self.cbPeds)
+        self.sub_peds = rospy.Subscriber('~peds', TrackedPersons, self.cbPeds)
         self.ped_traj_publisher = rospy.Publisher('~pedtraj',Clusters,queue_size=1)
 
     def cbPeds(self,msg):

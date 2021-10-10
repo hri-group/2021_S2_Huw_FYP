@@ -43,7 +43,7 @@
 
     </node>
 
-    <node pkg="development" type="mit_helper.py" name="mit_helper" if="$(arg cadrl_node)">
+    <node pkg="development" type="mit_spencer_helper.py" name="mit_spencer_helper" if="$(arg cadrl_node)">
         
         <!-- Publications -->
         <remap from="~pose" to="/pose"/>
@@ -52,6 +52,7 @@
         
         <!-- Subscriptions -->
         <remap from="~odom" to="/odometry/filtered"/>
+        <remap from='~peds' to="/pedsim_visualizer/tracked_persons"/>
     
     </node>
 
