@@ -2,7 +2,7 @@
 	<arg name="jackal_speed" default="1.2"/>
     <arg name="cartographer" default="false"/>
     <arg name="lasers" default="true"/>
-    <arg name="launch_detectors" default="true"/>
+    <arg name="launch_detectors" default="false"/>
 
     <!-- Launch jackal detection pipeline-->
     <include file="$(find development)/launch/tracking_single_rgbd_sensor.launch" if="$(arg launch_detectors)">
