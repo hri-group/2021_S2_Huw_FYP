@@ -1,0 +1,20 @@
+publisher:
+    detections:
+        topic: /dr_spaam_detections
+        queue_size: 1
+        latch: false
+
+    rviz:
+        topic: /dr_spaam_rviz
+        queue_size: 1
+        latch: false
+
+    spencer:
+        topic: /spencer/perception_internal/detected_persons/laser_front
+        queue_size: 1
+        latch: false
+
+subscriber:
+    scan:
+        topic: /scan
+        queue_size: 1
