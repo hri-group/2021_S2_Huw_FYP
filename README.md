@@ -16,6 +16,8 @@ This project focussed on developing a detection and tracking pipeline to detect 
 
 ## Dependencies
 
+All dependencies have been set up correctly in the *huw_ws* catkin workspace onboard Jackal 1. 
+
 ### Simulation
 
 1. [Pedsim](https://github.com/srl-freiburg/pedsim_ros)
