@@ -12,6 +12,7 @@ This project focussed on developing a detection and tracking pipeline to detect 
 1. Launch the lidar person detector that runs in a Docker container. The docker file can be found in the docker_dr_spaam folder. To build navigate to the folder and run `docker build --tag dr_spaam .` It is already built on Jackal 1. To execute run `docker run -t --rm --net=host dr_spaam`. This will start the person detector using scans from the lidar detector. The detector's input and output topics are set in [this](docker_dr_spaam/config/topics.yaml) config file.
   
 2. `roslaunch development test_mit_on_jackal.launch` This will launch the spencer tracking pipeline, which aggregates and fuses detections from the enabled lidar and camera detectors, then passes the detections to a nearest neighbour tracker. The tracker outputs trackedPerson information on the /spencer/perception/tracked_persons topic. The launch also starts the mit_cadrl navigation node. To test with your own navigation algorithm set the cadrl_node argument to false. 
+3. Use rviz to visualise the pedestrian tracking. Follow the Jackal's quickstart instructions to ensure the computer used for visualisation is communicating properly with the Jackal computer. 
 
 ## Dependencies
 
