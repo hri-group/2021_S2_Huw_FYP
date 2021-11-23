@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import rospy
 from sensor_msgs.msg import LaserScan
+from geometry_msgs.msg import Twist
 import math
 
 def callbackScan(data):
@@ -53,13 +54,25 @@ def callbackScan(data):
 	else:
 		isObstacleBack = False
 		rospy.loginfo('isObstacleBack false')
-
+		
+def callbackTwist(msg):
+	global isObstacleFront, isObstacleBack
+	
+	if msg.linear.x > 0 and isObstacleFront:
+		msg.linear.x = 0
+	elif msg.linear.x < 0 and isObstacleBack:
+		msg.linear.x = 0
+	twist_publisher.publish(msg)
 
 
 if __name__ == '__main__':
+	isObstacleFront = False
+	isObstacleBack = False
 	rospy.init_node('collision_avoidance',anonymous=True)
 
 	rospy.Subscriber("/scan", LaserScan, callbackScan)
+	rospy.Subscriber("/mit_cadrl/cmd_vel", Twist, callbackTwist)
+	twist_publisher = rospy.Publisher('/cmd_vel',Twist,queue_size=1) # position in global frame
 
 	rate = rospy.Rate(100) #100Hz
 	while not rospy.is_shutdown():
