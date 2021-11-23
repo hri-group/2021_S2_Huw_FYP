@@ -3,6 +3,7 @@
     <arg name="cartographer" default="false"/>
     <arg name="lasers" default="true"/>
     <arg name="launch_detectors" default="false"/>
+    <arg name="safety_stop" default="false"/>
 
     <!-- Launch jackal detection pipeline-->
     <include file="$(find development)/launch/tracking_single_rgbd_sensor.launch" if="$(arg launch_detectors)">
@@ -56,7 +57,10 @@
     
     </node>
 
-    <node name="mit_cadrl_cmd_vel_relay" pkg="topic_tools" type="relay" args="mit_cadrl/cmd_vel cmd_vel" /> 
+    <node name="mit_cadrl_cmd_vel_relay" pkg="topic_tools" type="relay" args="mit_cadrl/cmd_vel cmd_vel" unless="$(arg safety_stop)" />
+    <node name="mit_cadrl_cmd_vel_relay" pkg="development" type="collision_avoidance.py" if="$(arg safety_stop)" />
+
+
 
 
 </launch>
