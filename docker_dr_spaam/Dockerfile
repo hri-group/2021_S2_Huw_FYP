@@ -10,7 +10,7 @@ ENV ROS_WS /opt/ros_ws
 RUN mkdir -p $ROS_WS/src
 WORKDIR $ROS_WS
 # Clone package with the file we want
-RUN git -C src clone https://github.com/hwgat/2D_lidar_person_detection.git && cd src/2D_lidar_person_detection/dr_spaam && python3 setup.py install
+RUN git -C src clone https://github.com/hri-group/2D_lidar_person_detection.git && cd src/2D_lidar_person_detection/dr_spaam && python3 setup.py install
 
 # Install spencer messages for output pedestrian message format
 RUN git -C src clone https://github.com/spencer-project/spencer_messages.git
